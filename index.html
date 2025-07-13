@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Test de Inteligencia Emocional</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    color: #FFFFFF; /* Texto blanco */
+    font-family: 'Times New Roman', Times, serif;
+    text-align: center;
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  body {
+    padding: 5vw 5vw; /* Se adapta al ancho */
+  }
+
+  h1, h2, h3 {
+    color: #FFFFFF;
+    word-wrap: break-word;
+  }
+
+  .btn {
+    background-color: #FFD700;
+    color: #000;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    margin: 10px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background 0.3s, transform 0.2s;
+    max-width: 90vw;
+  }
+
+  .btn:hover {
+    background-color: #FFC700;
+    transform: scale(1.05);
+  }
+
+  #btnSiguiente[disabled] {
+    background-color: #444;
+    color: #888;
+    cursor: not-allowed;
+  }
+
+  .opciones {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+  }
+
+  .opciones button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1em;
+    border-radius: 10px;
+    border: 2px solid #FFD700;
+    background-color: #111;
+    color: #FFD700;
+    transition: background 0.3s, color 0.3s;
+    max-width: 90vw;
+  }
+
+  .opciones button:hover {
+    background-color: #FFD700;
+    color: #000;
+  }
+
+  .opciones button.seleccionado {
+    background-color: #FFD700;
+    color: #000;
+    font-weight: bold;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 15px;
+    margin-top: 20px;
+  }
+
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 1.8em;
+    }
+    .btn, .opciones button {
+      font-size: 0.9em;
+      padding: 10px 16px;
+    }
+  }
+</style>
+
+
+</head>
+<body>
+
+<header>
+  <h1 id="titulo" style="color: #FFD700;">Test de Inteligencia Emocional</h1>
+  <img src="https://i.postimg.cc/z53SY1M9/OIG4-9.jpg" alt="Imagen Test Emocional" style="max-width: 30%; height: auto; border-radius: 12px; box-shadow: 0 0 12px #FFD700;">
+</header>
+  <p style="font-size: 1.1em; line-height: 1.6; color: #fff;">
+    Este test interactivo te ayudará a explorar cómo percibes, comprendes y gestionas tus emociones en la vida cotidiana.
+    Las preguntas se adaptan a tu edad y te invitan a reflexionar sobre tu capacidad para reconocer lo que sientes,
+    empatizar con los demás y tomar decisiones desde la inteligencia emocional.
+  </p>
+  <p style="font-size: 1.1em; line-height: 1.6; margin-top: 15px; color: #fff;">
+    No se trata de medir qué tan bien lo haces, sino de conocerte mejor y fortalecer tu bienestar.
+    Al finalizar, recibirás una retroalimentación junto a una actividad artística para seguir creciendo emocionalmente desde la creatividad.
+  </p>
+</div>
+
+
+
+<div id="inicio">
+  <h2 id="seleccionGrupo">Selecciona tu grupo de edad</h2>
+  <button class="btn" onclick="iniciarTest('nino')" id="btnNino">Niño/a</button>
+  <button class="btn" onclick="iniciarTest('joven')" id="btnJoven">Joven</button>
+  <button class="btn" onclick="iniciarTest('adulto')" id="btnAdulto">Adulto</button>
+</div>
+  
+  <div style="text-align: right; margin-bottom: 1em;">
+  <label for="language-select" style="color: #FFD700; font-weight: bold;">🌐 Language:</label>
+  <select id="language-select" onchange="cambiarIdioma(this.value)">
+    <option value="es">Español</option>
+    <option value="en">English</option>
+    <option value="fr">Français</option>
+  </select>
+</div>
+
+<!-- ✅ Mueve este div afuera de #inicio -->
+<div id="resultado" style="display:none;"></div>
+
+
+  
+</div>
+
+<div id="test" style="display:none;">
+  <h2 id="pregunta"></h2>
+  <button class="btn" id="btnVozPregunta" onclick="leerPregunta()">🔊 Escuchar pregunta</button>
+  <div class="opciones" id="opciones"></div>
+  <button class="btn" onclick="preguntaAnterior()" id="btnAtras">🔙 Atrás</button>
+  <button class="btn" onclick="siguientePregunta()" id="btnSiguiente" disabled>Siguiente</button>
+  <button class="btn" onclick="reiniciarTest()" id="btnReiniciar">🔄 Reiniciar</button>
+  
+
+
+<script>
+  let idioma = 'es';
+
+  const textos = {
+    es: {
+      titulo: "Test de Inteligencia Emocional",
+      seleccionGrupo: "Selecciona tu grupo de edad",
+      nino: "Niño/a",
+      joven: "Joven",
+      adulto: "Adulto",
+      siguiente: "Siguiente",
+      atras: "🔙 Atrás",
+      reiniciar: "🔄 Reiniciar",
+      escucharPregunta: "🔊 Escuchar pregunta",
+      opciones: ["Nunca", "A veces", "Casi siempre", "Siempre"],
+      finalizado: "Test finalizado ✅"
+    },
+    en: {
+      titulo: "Emotional Intelligence Test",
+      seleccionGrupo: "Select your age group",
+      nino: "Child",
+      joven: "Teenager",
+      adulto: "Adult",
+      siguiente: "Next",
+      atras: "🔙 Back",
+      reiniciar: "🔄 Restart",
+      escucharPregunta: "🔊 Listen to question",
+      opciones: ["Never", "Sometimes", "Almost always", "Always"],
+      finalizado: "Test finished ✅"
+    },
+    fr: {
+      titulo: "Test d'intelligence émotionnelle",
+      seleccionGrupo: "Sélectionnez votre groupe d'âge",
+      nino: "Enfant",
+      joven: "Adolescent",
+      adulto: "Adulte",
+      siguiente: "Suivant",
+      atras: "🔙 Retour",
+      reiniciar: "🔄 Recommencer",
+      escucharPregunta: "🔊 Écouter la question",
+      opciones: ["Jamais", "Parfois", "Presque toujours", "Toujours"],
+      finalizado: "Test terminé ✅"
+    }
+  };
+
+  const preguntas = {
+    es: {
+      nino: [
+        "¿Ayudas a tus amigos cuando están tristes?", 
+        "¿Te sientes mal cuando alguien te grita?", 
+        "¿Te gusta ayudar a tus compañeros?", 
+        "¿Puedes decir con facilidad lo que sientes?", 
+        "¿Buscas a alguien para hablar cuando estás triste?", 
+        "¿Te molestas mucho cuando pierdes un juego?", 
+        "¿Te acercas a alguien que está solo?", 
+        "¿Compartes tus juguetes o materiales con los demás?", 
+        "¿Logras calmarte cuando te enojas?", 
+        "¿Escuchas con atención cuando otros te hablan?"
+      ],
+      joven: [
+        "¿Eres consciente de cómo te sientes durante el día?", 
+        "¿Sabes qué situaciones te ponen ansioso?", 
+        "¿Puedes identificar emociones complejas como frustración o culpa?", 
+        "¿Te resulta fácil expresar cómo te sientes?", 
+        "¿Tomas decisiones pensando en tus emociones?", 
+        "¿Te afecta mucho la crítica?", 
+        "¿Te cuesta decir 'no' por miedo a herir?", 
+        "¿Te esfuerzas por entender cómo se sienten otros?", 
+        "¿Pides ayuda cuando lo necesitas emocionalmente?", 
+        "¿Te sientes cómodo hablando de tus sentimientos?", 
+        "¿Sueles tener discusiones intensas?", 
+        "¿Te cuesta perdonar?", 
+        "¿Tiendes a reprimir lo que sientes?", 
+        "¿Tu estado emocional influye en tu rendimiento?", 
+        "¿Intentas aprender de tus emociones negativas?"
+      ],
+      adulto: [
+        "¿Reconoces con facilidad tus emociones en distintas situaciones?", 
+        "¿Manejas bien el estrés en tu día a día?", 
+        "¿Eres empático con personas que no piensan como tú?", 
+        "¿Tomas decisiones racionales en momentos emocionales?", 
+        "¿Expresas tus sentimientos con asertividad?", 
+        "¿Te tomas el tiempo para reflexionar sobre tus emociones?", 
+        "¿Sabes identificar lo que sientes sin confusión?", 
+        "¿Puedes perdonar con facilidad?", 
+        "¿Te adaptas a los cambios emocionales de otros?", 
+        "¿Eres consciente del impacto emocional que tienes en los demás?", 
+        "¿Mantienes la calma en situaciones difíciles?", 
+        "¿Eres capaz de consolar a alguien con facilidad?", 
+        "¿Sientes gratitud regularmente?", 
+        "¿Te cuesta pedir perdón?", 
+        "¿Reconoces señales físicas de tus emociones?", 
+        "¿Tiendes a ser emocionalmente reactivo?", 
+        "¿Te sientes emocionalmente estable la mayor parte del tiempo?", 
+        "¿Analizas tus emociones después de una discusión?", 
+        "¿Buscas maneras de crecer emocionalmente?", 
+        "¿Practicas la escucha activa con los demás?"
+      ]
+    },
+
+    en: {
+      nino: [
+        "Do you help your friends when they are sad?",
+        "Do you feel bad when someone yells at you?",
+        "Do you like helping your classmates?",
+        "Can you easily say how you feel?",
+        "Do you look for someone to talk to when you're sad?",
+        "Do you get very upset when you lose a game?",
+        "Do you approach someone who is alone?",
+        "Do you share your toys or materials with others?",
+        "Can you calm yourself down when you get angry?",
+        "Do you listen carefully when others speak?"
+      ],
+      joven: [
+        "Are you aware of how you feel throughout the day?",
+        "Do you know what situations make you anxious?",
+        "Can you identify complex emotions like frustration or guilt?",
+        "Is it easy for you to express how you feel?",
+        "Do you make decisions based on your emotions?",
+        "Are you very affected by criticism?",
+        "Is it hard for you to say 'no' for fear of hurting others?",
+        "Do you try to understand how others feel?",
+        "Do you ask for help when you need emotional support?",
+        "Do you feel comfortable talking about your feelings?",
+        "Do you often have intense arguments?",
+        "Is it hard for you to forgive?",
+        "Do you tend to suppress what you feel?",
+        "Does your emotional state affect your performance?",
+        "Do you try to learn from your negative emotions?"
+      ],
+      adulto: [
+        "Do you easily recognize your emotions in different situations?",
+        "Do you manage stress well in your daily life?",
+        "Are you empathetic toward people who think differently than you?",
+        "Do you make rational decisions in emotional moments?",
+        "Do you express your feelings assertively?",
+        "Do you take time to reflect on your emotions?",
+        "Can you identify what you're feeling without confusion?",
+        "Are you able to forgive easily?",
+        "Do you adapt to others’ emotional changes?",
+        "Are you aware of the emotional impact you have on others?",
+        "Do you stay calm in difficult situations?",
+        "Can you easily comfort someone?",
+        "Do you feel gratitude regularly?",
+        "Is it hard for you to apologize?",
+        "Do you recognize physical signs of your emotions?",
+        "Do you tend to react emotionally?",
+        "Do you feel emotionally stable most of the time?",
+        "Do you analyze your emotions after a discussion?",
+        "Do you look for ways to grow emotionally?",
+        "Do you practice active listening with others?"
+      ]
+    },
+
+    fr: {
+      nino: [
+        "Aides-tu tes amis quand ils sont tristes?",
+        "Te sens-tu mal quand quelqu’un te crie dessus?",
+        "Aimes-tu aider tes camarades de classe?",
+        "Peux-tu dire facilement ce que tu ressens?",
+        "Cherches-tu quelqu’un à qui parler quand tu es triste?",
+        "Te fâches-tu beaucoup quand tu perds un jeu?",
+        "T’approches-tu de quelqu’un qui est seul?",
+        "Partages-tu tes jouets ou ton matériel avec les autres?",
+        "Peux-tu te calmer quand tu es en colère?",
+        "Écoutes-tu attentivement quand les autres parlent?"
+      ],
+      joven: [
+        "Es-tu conscient de ce que tu ressens pendant la journée?",
+        "Sais-tu quelles situations te rendent anxieux(se)?",
+        "Peux-tu identifier des émotions complexes comme la frustration ou la culpabilité?",
+        "Est-il facile pour toi d'exprimer ce que tu ressens?",
+        "Prends-tu des décisions en pensant à tes émotions?",
+        "La critique t’affecte-t-elle beaucoup?",
+        "As-tu du mal à dire 'non' par peur de blesser?",
+        "Fais-tu des efforts pour comprendre ce que les autres ressentent?",
+        "Demandes-tu de l’aide quand tu en as besoin émotionnellement?",
+        "Es-tu à l’aise pour parler de tes sentiments?",
+        "As-tu souvent des discussions intenses?",
+        "As-tu du mal à pardonner?",
+        "As-tu tendance à refouler ce que tu ressens?",
+        "Ton état émotionnel influence-t-il ton rendement?",
+        "Essaies-tu d’apprendre de tes émotions négatives?"
+      ],
+      adulto: [
+        "Reconnais-tu facilement tes émotions dans différentes situations?",
+        "Gères-tu bien le stress au quotidien?",
+        "Es-tu empathique envers des personnes qui ne pensent pas comme toi?",
+        "Prends-tu des décisions rationnelles dans des moments émotionnels?",
+        "Exprimes-tu tes sentiments avec assurance?",
+        "Prends-tu le temps de réfléchir à tes émotions?",
+        "Peux-tu identifier ce que tu ressens sans confusion?",
+        "Es-tu capable de pardonner facilement?",
+        "T’adaptes-tu aux changements émotionnels des autres?",
+        "Es-tu conscient de l’impact émotionnel que tu as sur les autres?",
+        "Reste-tu calme dans des situations difficiles?",
+        "Es-tu capable de consoler quelqu’un facilement?",
+        "Ressens-tu régulièrement de la gratitude?",
+        "As-tu du mal à demander pardon?",
+        "Reconnais-tu les signes physiques de tes émotions?",
+        "As-tu tendance à réagir de manière émotionnelle?",
+        "Te sens-tu émotionnellement stable la plupart du temps?",
+        "Analyses-tu tes émotions après une discussion?",
+        "Cherches-tu des façons de croître émotionnellement?",
+        "Pratiques-tu l’écoute active avec les autres?"
+      ]
+    }
+  };
+  let grupo = '';
+  let indice = 0;
+  let puntajes = [];
+
+  function cambiarIdioma(nuevoIdioma) {
+    idioma = nuevoIdioma;
+    const t = textos[idioma];
+    document.getElementById("titulo").textContent = t.titulo;
+    document.getElementById("seleccionGrupo").textContent = t.seleccionGrupo;
+    document.getElementById("btnNino").textContent = t.nino;
+    document.getElementById("btnJoven").textContent = t.joven;
+    document.getElementById("btnAdulto").textContent = t.adulto;
+    document.getElementById("btnSiguiente").textContent = t.siguiente;
+    document.getElementById("btnAtras").textContent = t.atras;
+    document.getElementById("btnReiniciar").textContent = t.reiniciar;
+    document.getElementById("btnVozPregunta").textContent = t.escucharPregunta;
+    if (grupo) mostrarPregunta();
+  }
+
+  function iniciarTest(g) {
+    grupo = g;
+    indice = 0;
+    puntajes = [];
+    document.getElementById('inicio').style.display = 'none';
+    document.getElementById('test').style.display = 'block';
+    cambiarIdioma(idioma);
+    mostrarPregunta();
+  }
+
+  function mostrarPregunta() {
+    const pregunta = preguntas[idioma][grupo][indice];
+    document.getElementById("pregunta").textContent = pregunta;
+    document.getElementById("btnSiguiente").disabled = true;
+
+    const opciones = document.getElementById("opciones");
+    opciones.innerHTML = "";
+
+    textos[idioma].opciones.forEach((texto, idx) => {
+      const btn = document.createElement("button");
+      btn.textContent = texto;
+      btn.onclick = () => seleccionarRespuesta(btn, idx);
+      opciones.appendChild(btn);
+    });
+  }
+
+  function seleccionarRespuesta(boton, valor) {
+    document.querySelectorAll('.opciones button').forEach(btn => btn.classList.remove('seleccionado'));
+    boton.classList.add('seleccionado');
+    puntajes[indice] = valor;
+    document.getElementById("btnSiguiente").disabled = false;
+  }
+
+  function siguientePregunta() {
+  if (indice < preguntas[idioma][grupo].length - 1) {
+    indice++;
+    mostrarPregunta();
+  } else {
+    mostrarResultado(); // Aquí se ejecuta mostrarResultado al finalizar
+  }
+}
+  
+function mostrarResultado() {
+  console.log("Mostrando resultado..."); // 👈 Para depurar en consola
+
+  const resultadoDiv = document.getElementById('resultado');
+  if (!resultadoDiv) {
+    alert("⚠️ Error: No se encontró el elemento con id 'resultado'.");
+    return;
+  }
+
+  document.getElementById('test').style.display = 'none';
+  document.getElementById('opciones').innerHTML = '';
+
+  const puntaje = puntajes.reduce((a, b) => a + b, 0);
+  const total = preguntas[idioma][grupo].length * 3;
+  const porcentaje = Math.round((puntaje / total) * 100);
+
+  let mensaje = '';
+  let actividad = '';
+
+  if (porcentaje >= 75) {
+    mensaje = idioma === 'es' ? '🌟 ¡Tienes una gran inteligencia emocional!' :
+              idioma === 'en' ? '🌟 You have great emotional intelligence!' :
+              '🌟 Vous avez une grande intelligence émotionnelle!';
+    actividad = idioma === 'es' ? '🎨 Crea una historieta que muestre cómo manejas emociones en diferentes situaciones.' :
+                idioma === 'en' ? '🎨 Create a comic strip showing how you manage emotions in different situations.' :
+                '🎨 Crée une bande dessinée montrant comment tu gères tes émotions dans différentes situations.';
+  } else if (porcentaje >= 50) {
+    mensaje = idioma === 'es' ? '🔸 Tienes un nivel medio de inteligencia emocional.' :
+              idioma === 'en' ? '🔸 You have a medium level of emotional intelligence.' :
+              '🔸 Vous avez un niveau moyen d’intelligence émotionnelle.';
+    actividad = idioma === 'es' ? '🎭 Dibuja una emoción difícil de expresar y compártela con alguien de confianza.' :
+                idioma === 'en' ? '🎭 Draw a difficult-to-express emotion and share it with someone you trust.' :
+                '🎭 Dessine une émotion difficile à exprimer et partage-la avec quelqu’un de confiance.';
+  } else {
+    mensaje = idioma === 'es' ? '🔹 Puedes mejorar tu inteligencia emocional.' :
+              idioma === 'en' ? '🔹 You can improve your emotional intelligence.' :
+              '🔹 Tu peux améliorer ton intelligence émotionnelle.';
+    actividad = idioma === 'es' ? '🎭 Haz una máscara que represente lo que sientes por dentro y por fuera.' :
+                idioma === 'en' ? '🎭 Make a mask representing what you feel inside and outside.' :
+                '🎭 Crée un masque représentant ce que tu ressens à l’intérieur et à l’extérieur.';
+  }
+
+ const criterios = `
+  <h3 style="margin-top: 30px; color: #FFFFFF; font-family: 'Times New Roman', serif;">
+    🔍 ${idioma === 'es' ? 'Criterios evaluados en este test' :
+          idioma === 'en' ? 'Criteria assessed in this test' :
+          'Critères évalués dans ce test'}:
+  </h3>
+  <ul style="text-align: left; max-width: 700px; margin: 20px auto; font-size: 1em; line-height: 1.6; color: #FFFFFF; font-family: 'Times New Roman', serif;">
+    <li><strong>${idioma === 'es' ? 'Reconocimiento emocional' :
+                   idioma === 'en' ? 'Emotional awareness' : 'Reconnaissance émotionnelle'}:</strong> 
+        ${idioma === 'es' ? 'capacidad para identificar tus propias emociones.' :
+         idioma === 'en' ? 'ability to identify your own emotions.' :
+         'capacité à identifier vos propres émotions.'}</li>
+    <li><strong>${idioma === 'es' ? 'Regulación emocional' :
+                   idioma === 'en' ? 'Emotional regulation' : 'Régulation émotionnelle'}:</strong> 
+        ${idioma === 'es' ? 'manejo adecuado de emociones intensas.' :
+         idioma === 'en' ? 'appropriate handling of intense emotions.' :
+         'gestion appropriée des émotions intenses.'}</li>
+    <li><strong>${idioma === 'es' ? 'Empatía' :
+                   idioma === 'en' ? 'Empathy' : 'Empathie'}:</strong> 
+        ${idioma === 'es' ? 'comprensión y conexión con lo que sienten los demás.' :
+         idioma === 'en' ? 'understanding and connecting with others’ feelings.' :
+         'compréhension et connexion avec les sentiments des autres.'}</li>
+    <li><strong>${idioma === 'es' ? 'Expresión emocional' :
+                   idioma === 'en' ? 'Emotional expression' : 'Expression émotionnelle'}:</strong> 
+        ${idioma === 'es' ? 'habilidad para comunicar cómo te sientes.' :
+         idioma === 'en' ? 'ability to communicate how you feel.' :
+         'capacité à communiquer ce que vous ressentez.'}</li>
+    <li><strong>${idioma === 'es' ? 'Toma de decisiones' :
+                   idioma === 'en' ? 'Decision making' : 'Prise de décision'}:</strong> 
+        ${idioma === 'es' ? 'uso de las emociones para guiar tus elecciones.' :
+         idioma === 'en' ? 'use of emotions to guide your choices.' :
+         'utilisation des émotions pour guider vos choix.'}</li>
+  </ul>`;
+
+  resultadoDiv.innerHTML = `
+    <h2>${mensaje}</h2>
+    <p>${idioma === 'es' ? 'Tu puntaje fue de' : idioma === 'en' ? 'Your score was' : 'Ton score était'}: <strong>${porcentaje}%</strong></p>
+    <h3>${idioma === 'es' ? 'Actividad artística sugerida' : idioma === 'en' ? 'Suggested artistic activity' : 'Activité artistique suggérée'}:</h3>
+    <p>${actividad}</p>
+    ${criterios}
+    <div style="margin-top: 30px;">
+    <button class="btn" onclick="reiniciarTest()">🔄 ${idioma === 'es' ? 'Reiniciar' : idioma === 'en' ? 'Restart' : 'Recommencer'}</button>
+  </div>
+  `;
+
+  resultadoDiv.style.display = 'block';
+  document.getElementById('btnReiniciar').style.display = 'inline-block';
+}
+
+
+
+  function preguntaAnterior() {
+    if (indice > 0) {
+      indice--;
+      mostrarPregunta();
+    }
+  }
+
+  function reiniciarTest() {
+  grupo = '';
+  indice = 0;
+  puntajes = [];
+  document.getElementById('test').style.display = 'none';
+  document.getElementById('resultado').style.display = 'none';
+  document.getElementById('inicio').style.display = 'block';
+  document.getElementById('btnReiniciar').style.display = 'none';
+}
+
+
+  function leerPregunta() {
+    const texto = document.getElementById("pregunta").textContent;
+    const mensaje = new SpeechSynthesisUtterance(texto);
+    mensaje.lang = idioma === 'es' ? 'es-ES' : idioma === 'en' ? 'en-US' : 'fr-FR';
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(mensaje);
+  }
+   
+</script>
+  
+  
+<footer style="
+  background-color: #000;
+  color: #FFD700;
+  text-align: center;
+  padding: 25px 15px;
+  font-family: 'Arial', sans-serif;
+  font-size: 0.8em;
+  border-top: 0.5px solid #FFD700;
+  line-height: 1.4;
+">
+  <p style="margin: 5px 0;">🌟 Parte del proyecto creativo en evolución <strong style="color: #fff;">“Emociones en el Aula”</strong></p>
+  <p style="margin: 5px 0;">🔧 Este proyecto se mejora constantemente con nuevas herramientas y experiencias reales.</p>
+  <p style="margin: 5px 0;">📘 Desarrollado con 💛 por <strong style="color: #fff;">Yobana Orozco Benavides</strong></p>
+  <p style="margin: 5px 0;">🔒 Uso educativo — <span style="color:#FFA500; font-weight: bold;">sin fines comerciales</span></p>
+  <p style="margin: 8px 0;">Más en: 
+    <a href="https://yobanaorozcoartista.bio.link/" target="_blank" style="color: #FFD700; text-decoration: underline; font-weight: bold;">
+      yobanaorozcoartista.bio.link
+    </a>
+  </p>
+
+  <!-- Imágenes insertadas -->
+  <div style="margin-top: 15px;">
+    <img src="https://i.postimg.cc/dqKj7LQQ/480702220-618041787505911-8280549859336367380-n.jpg" 
+         alt="Logo 1" 
+         style="width: 60px; height: auto; margin: 0 10px; border-radius: 8px; border: 1px solid #FFD700;">
+    <img src="https://i.postimg.cc/NfcBdfV4/418b1c0f-8d2a-463f-9cb1-271bd0abfd0e-1.png" 
+         alt="Logo 2" 
+         style="width: 60px; height: auto; margin: 0 10px; border-radius: 8px; border: 1px solid #FFD700;">
+  </div>
+
+  <p style="margin-top: 12px; font-size: 0.8em; color: #888;">© 2025 - Todos los derechos reservados</p>
+</footer>
+
+</body>
+</html>
+
